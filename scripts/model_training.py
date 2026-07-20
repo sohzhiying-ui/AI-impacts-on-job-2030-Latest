@@ -9,10 +9,17 @@ def load_data(path="data/AI_Impact_on_Jobs_2030.csv"):
     return df
 
 def prepare_features(df):
-    # Example target: Risk_Category (<0.10=Low, >0.10 to 0.40 = Medium, >0.40= High)
     X = df[["Years_Experience", "Future_Demand_Score", "Job_Growth_2030", "Automation_Level"]]
-    y = df["AI_Replacement_Risk"]
+    
+    # Convert numeric AI_Replacement_Risk into categories
+    y = pd.cut(
+        df["AI_Replacement_Risk"],
+        bins=[-float("inf"), 0.10, 0.40, float("inf")],
+        labels=["Low", "Medium", "High"]
+    )
+    
     return X, y
+
 
 def train_model(X, y):
     X_train, X_test, y_train, y_test = train_test_split(
