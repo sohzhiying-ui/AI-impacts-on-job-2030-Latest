@@ -1,16 +1,17 @@
 import pandas as pd
+import joblib
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import classification_report, confusion_matrix
 
-def load_data(path="../data/AI_Impact_on_Jobs_2030_engineered.csv"):
+def load_data(path="data/AI_Impact_on_Jobs_2030.csv"):
     df = pd.read_csv(path)
     return df
 
 def prepare_features(df):
-    # Example target: Risk_Category (Low, Medium, High)
-    X = df[["Automation_Risk", "Wage", "Growth_Rate", "Vulnerability_Index"]]
-    y = df["Risk_Category"]
+    # Example target: Risk_Category (<0.10=Low, >0.10 to 0.40 = Medium, >0.40= High)
+    X = df[["Years_Experience", "Future_Demand_Score", "Job_Growth_2030", "Automation_Level"]]
+    y = df["AI_Replacement_Risk"]
     return X, y
 
 def train_model(X, y):
@@ -35,3 +36,6 @@ if __name__ == "__main__":
     data = load_data()
     X, y = prepare_features(data)
     model = train_model(X, y)
+ # Save the trained model for Streamlit dashboard
+    joblib.dump(model, "best_model.pkl")
+    print(" Model saved as best_model.pkl")
